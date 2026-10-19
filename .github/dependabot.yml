@@ -1,0 +1,27 @@
+version: 2
+updates:
+  - package-ecosystem: gradle
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7              # skip releases younger than a week
+    groups:
+      dependencies:
+        patterns: ["*"]
+    commit-message:
+      prefix: chore
+      include: scope               # chore(deps): ...
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    groups:
+      actions:
+        patterns: ["*"]
+    commit-message:
+      prefix: ci
+      include: scope               # ci(deps): ...

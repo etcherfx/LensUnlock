@@ -1,0 +1,131 @@
+# yamllint disable rule:line-length
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Build without publishing
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0   # tags, for the Full Changelog link
+
+      - name: Read version and check the tag
+        id: version
+        shell: bash
+        run: |
+          version="$(sed -n 's/^version=//p' gradle.properties)"
+          [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?(\+[0-9A-Za-z.-]+)?$ ]] \
+            || { echo "::error::'$version' is not SemVer"; exit 1; }
+          if [[ "$GITHUB_REF_TYPE" == tag && "$GITHUB_REF_NAME" != "v$version" ]]; then
+            echo "::error::tag $GITHUB_REF_NAME does not match version $version"; exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Check the signing secrets
+        env:
+          RELEASE_KEYSTORE_BASE64: ${{ secrets.RELEASE_KEYSTORE_BASE64 }}
+          RELEASE_KEYSTORE_PASSWORD: ${{ secrets.RELEASE_KEYSTORE_PASSWORD }}
+          RELEASE_KEY_ALIAS: ${{ secrets.RELEASE_KEY_ALIAS }}
+        run: |
+          for name in RELEASE_KEYSTORE_BASE64 RELEASE_KEYSTORE_PASSWORD RELEASE_KEY_ALIAS; do
+            [[ -n "${!name}" ]] || { echo "::error::missing secret $name"; exit 1; }
+          done
+
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - uses: gradle/actions/setup-gradle@v6
+        with:
+          cache-read-only: true
+
+      - name: Decode the keystore
+        env:
+          RELEASE_KEYSTORE_BASE64: ${{ secrets.RELEASE_KEYSTORE_BASE64 }}
+        run: |
+          echo "$RELEASE_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/release.p12"
+          echo "RELEASE_KEYSTORE_FILE=$RUNNER_TEMP/release.p12" >> "$GITHUB_ENV"
+
+      - name: Check, build and sign
+        env:
+          RELEASE_KEYSTORE_PASSWORD: ${{ secrets.RELEASE_KEYSTORE_PASSWORD }}
+          RELEASE_KEY_ALIAS: ${{ secrets.RELEASE_KEY_ALIAS }}
+        run: ./gradlew check assembleDebug assembleRelease
+
+      - name: Verify the signature
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          rm -f "$RUNNER_TEMP/release.p12"
+          apksigner="$(find "$ANDROID_HOME/build-tools" -name apksigner -type f | sort -V | tail -1)"
+          mkdir -p dist
+          cp app/build/outputs/apk/release/app-release.apk "dist/LensUnlock-$VERSION.apk"
+          "$apksigner" verify --verbose --print-certs "dist/LensUnlock-$VERSION.apk"
+
+      - name: Release notes + Full Changelog link
+        shell: bash
+        env:
+          TAG: v${{ steps.version.outputs.version }}
+        run: |
+          notes=".github/release-notes/$TAG.md"
+          [[ -f "$notes" ]] || { echo "::error::missing $notes"; exit 1; }
+          ref="$TAG"; git rev-parse -q --verify "refs/tags/$TAG" >/dev/null || ref=HEAD   # dry run before tagging
+          # previous version tag in history; a stable release skips pre-releases (tags with "-")
+          stable=(); [[ "$TAG" == *-* ]] || stable=(--exclude '*-*')
+          prev="$(git describe --tags --abbrev=0 --match 'v[0-9]*' --match '[0-9]*' --exclude "$TAG" "${stable[@]}" "$ref" 2>/dev/null || true)"
+          base="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY"
+          if [[ -n "$prev" ]]; then link="$base/compare/$prev...$TAG"; else link="$base/commits/$TAG"; fi
+          { cat "$notes"; printf '\n**Full Changelog**: %s\n' "$link"; } > release-notes.md
+          cat release-notes.md >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: dist
+          path: |
+            dist/
+            release-notes.md
+          if-no-files-found: error
+
+  publish:
+    needs: build
+    if: github.ref_type == 'tag'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: dist
+      # Create as a draft, attach the APK, then publish. This repo has immutable
+      # releases, which lock a release when it's published, so files must be attached first.
+      - uses: softprops/action-gh-release@v3
+        id: release
+        with:
+          name: LensUnlock v${{ needs.build.outputs.version }}
+          body_path: release-notes.md
+          files: dist/*
+          fail_on_unmatched_files: true
+          prerelease: ${{ contains(github.ref_name, '-') }}
+          draft: true
+
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_ID: ${{ steps.release.outputs.id }}
+        run: gh api -X PATCH "repos/$GITHUB_REPOSITORY/releases/$RELEASE_ID" -F draft=false --jq .html_url
