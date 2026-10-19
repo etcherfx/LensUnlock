@@ -6,6 +6,9 @@
 
 <img alt="kotlin" height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/built-with/kotlin_vector.svg">
 
+[![Release](https://img.shields.io/github/v/release/etcherfx/LensUnlock?style=for-the-badge)](https://github.com/etcherfx/LensUnlock/releases/latest)
+[![Build](https://img.shields.io/github/actions/workflow/status/etcherfx/LensUnlock/ci.yml?style=for-the-badge)](https://github.com/etcherfx/LensUnlock/actions/workflows/ci.yml)
+
 **An Xposed module that lets apps use the ultrawide lens, video stabilization and a steady frame rate.**
 
 [What it does](#what-it-does) · [Why per app](#why-per-app) · [Status](#status)
@@ -37,7 +40,7 @@ Planned work is the hooks and a settings screen for choosing apps and their valu
 
 ## Development
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) and [AGENTS.md](AGENTS.md).
+Everything Android-related builds inside a Docker container; see [CONTRIBUTING.md](CONTRIBUTING.md) for the commands and [AGENTS.md](AGENTS.md) for the code map.
 
 ## License
 

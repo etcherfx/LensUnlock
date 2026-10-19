@@ -2,13 +2,19 @@
 
 A modern-API Xposed module (libxposed API 101, compiled against 102) scoped to user-selected apps (the app process, not `system_server`). For Camera2 apps it overrides capture-request settings the app never sets: zoom ratio, video stabilization mode and an optional fixed AE target fps range, configured per app. First tested target: Discord (`com.discord`).
 
-The repo is scaffolding only so far: no Gradle project or code yet. Update this file when the implementation lands.
-
 ## Setup and verification
 
-Android builds will run inside a Docker container that carries the Android SDK and JDK, as in [CameraRefreshFix](https://github.com/etcherfx/CameraRefreshFix). Don't install anything Android-related on the host, and don't assume the SDK exists outside the container. If a JS tool is ever needed, use Bun; there is no Node or npm.
+Builds and tests run inside a Docker container that carries the Android SDK and JDK 21, as in [CameraRefreshFix](https://github.com/etcherfx/CameraRefreshFix). Don't install anything Android-related on the host, and don't assume the SDK exists outside the container.
 
-Hooks can only be verified on a device with an Xposed framework that implements libxposed API 101 or newer (tested with Vector 2.2, the JingMatrix LSPosed fork).
+```sh
+docker build -t lensunlock-build docker
+docker run --rm -v "$PWD:/work" -v lensunlock-gradle:/root/.gradle lensunlock-build ./gradlew check assembleDebug assembleRelease
+```
+
+- `check` runs the JVM unit tests and lint (warnings are errors, including "a newer Gradle or AGP is available").
+- Outputs: `app/build/outputs/apk/debug/app-debug.apk` and `app/build/outputs/apk/release/app-release-unsigned.apk` (signed only when the `RELEASE_KEYSTORE_*` variables are set; see CONTRIBUTING).
+- Hooks can only be verified on a device with an Xposed framework that implements libxposed API 101 or newer (tested with Vector 2.2, the JingMatrix LSPosed fork).
+- If a JS tool is ever needed, use Bun; there is no Node or npm.
 
 ## Design facts
 
