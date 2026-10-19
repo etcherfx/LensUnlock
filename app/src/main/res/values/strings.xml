@@ -2,4 +2,47 @@
 <resources>
     <string name="app_name" translatable="false">LensUnlock</string>
     <string name="module_description">Lets the apps you pick use the ultrawide lens, video stabilization and a steady frame rate.</string>
+
+    <string name="status_connected">Connected to %1$s %2$s (API %3$d).</string>
+    <string name="status_inactive">Module not active: enable it in your Xposed manager and add the apps you want to change to its scope.</string>
+    <string name="status_no_apps">No apps are in the module\'s scope: add them in your Xposed manager, then force-stop each app.</string>
+    <string name="status_no_remote_prefs">This framework does not support remote preferences, so these settings cannot be saved.</string>
+    <string name="status_error">Could not talk to the Xposed framework: %1$s</string>
+
+    <string name="apps_header">Apps in scope</string>
+    <string name="navigate_back">Back</string>
+    <string name="footer_apply">Changes apply the next time the app starts its camera.</string>
+
+    <string name="camera_back">Back camera</string>
+    <string name="camera_front">Front camera</string>
+    <string name="camera_missing">This device has no camera facing this way.</string>
+
+    <string name="setting_zoom">Zoom</string>
+    <string name="setting_stabilization">Video stabilization</string>
+    <string name="setting_fps">Frame rate</string>
+
+    <string name="app_default">App default</string>
+    <string name="zoom_minimum">Camera minimum</string>
+    <string name="zoom_minimum_value">Camera minimum (%1$sx)</string>
+    <string name="zoom_custom">Custom</string>
+    <string name="zoom_custom_value">Custom (%1$sx)</string>
+    <string name="zoom_custom_field">Zoom ratio</string>
+    <string name="zoom_custom_range">Between %1$sx and %2$sx; values outside are clamped.</string>
+    <string name="zoom_custom_invalid">Enter a number greater than 0.</string>
+    <string name="stabilization_off">Off</string>
+    <string name="stabilization_on">On</string>
+    <string name="stabilization_preview">Preview stabilization</string>
+    <string name="fps_fixed">%1$d fps fixed</string>
+    <string name="fps_range">%1$d–%2$d fps</string>
+
+    <string name="summary_app">Back: %1$s · Front: %2$s</string>
+    <string name="summary_app_defaults">app defaults</string>
+    <string name="summary_zoom">%1$sx</string>
+    <string name="summary_zoom_minimum">minimum zoom</string>
+    <string name="summary_stabilization_off">stabilization off</string>
+    <string name="summary_stabilization_on">stabilization on</string>
+    <string name="summary_stabilization_preview">preview stabilization</string>
+
+    <string name="dialog_cancel">Cancel</string>
+    <string name="dialog_save">Save</string>
 </resources>
