@@ -15,9 +15,6 @@
 
 </div>
 
-> [!NOTE]
-> There is no release yet; build the debug APK from source (see [Development](#development)) to try it.
-
 ## What it does
 
 Many camera apps never ask for the ultrawide lens, video stabilization or a fixed frame rate, even though the device supports them. LensUnlock is a modern-API Xposed module (libxposed API 101, compiled against 102) that sets those capture-request values for Camera2 apps you pick. Each setting is opt-in per app and per camera facing, and when it's on it replaces whatever the app sent.
@@ -34,7 +31,7 @@ The first tested target is Discord (`com.discord`), whose stock `org.webrtc` `Ca
 
 You need a rooted device with an Xposed framework that implements libxposed API 101 or newer (see [Compatibility](#compatibility)).
 
-1. Install the LensUnlock APK.
+1. Download `LensUnlock-X.Y.Z.apk` from the [latest release](https://github.com/etcherfx/LensUnlock/releases/latest) and install it.
 2. In your Xposed manager, enable LensUnlock and add the apps you want to change to its scope. Discord is recommended by default.
 3. Force-stop each app you added. The framework loads the module when the app's process starts, so no reboot is needed.
 4. Open LensUnlock's settings from your Xposed manager and pick values for each app.
