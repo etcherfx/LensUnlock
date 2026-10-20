@@ -1,6 +1,6 @@
 # LensUnlock
 
-A modern-API Xposed module (libxposed API 101, compiled against 102) scoped to user-selected apps (the app process, not `system_server`). For Camera2 apps it overrides capture-request settings the app gets wrong: zoom ratio, video stabilization mode and an optional fixed AE target fps range, configured per app and per camera facing. First target: Discord (`com.discord`); not yet validated on a device.
+A modern-API Xposed module (libxposed API 101, compiled against 102) scoped to user-selected apps (the app process, not `system_server`). For Camera2 apps it overrides capture-request settings the app gets wrong: zoom ratio, video stabilization mode and an optional fixed AE target fps range, configured per app and per camera facing. Tested target: Discord 349.9 (`com.discord`) on a Pixel 10 Pro with Android 17 and Vector 2.2.
 
 ## Setup and verification
 

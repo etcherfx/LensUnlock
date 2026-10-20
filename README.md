@@ -16,7 +16,7 @@
 </div>
 
 > [!NOTE]
-> LensUnlock is in development and not yet tested on a device. There is no release yet; build the debug APK from source (see [Development](#development)) to try it.
+> There is no release yet; build the debug APK from source (see [Development](#development)) to try it.
 
 ## What it does
 
@@ -28,7 +28,7 @@ Many camera apps never ask for the ultrawide lens, video stabilization or a fixe
 | Video stabilization | `PREVIEW_STABILIZATION` | Stabilizes the preview and the stream |
 | AE target fps range | `[30,30]` (optional) | Holds a steady frame rate |
 
-The first target is Discord (`com.discord`), whose stock `org.webrtc` `Camera2Session` captures at 1280x720 with zoom `1.0`, video stabilization off and an AE fps range of `[15,30]`.
+The first tested target is Discord (`com.discord`), whose stock `org.webrtc` `Camera2Session` captures at 1280x720 with zoom `1.0`, video stabilization off and an AE fps range of `[15,30]`.
 
 ## Getting started
 
@@ -72,8 +72,9 @@ If a hook target is missing or has a different signature on your Android build, 
 
 | Item | Status |
 |---|---|
-| Android | 12 or newer. Not yet tested on a device |
-| Xposed frameworks | Any that implements libxposed API 101 or newer; testing will use Vector 2.2 (the JingMatrix LSPosed fork) |
+| Android | 12 or newer; tested on Android 17 (Pixel 10 Pro) |
+| Xposed frameworks | Any that implements libxposed API 101 or newer. Tested with Vector 2.2 (the JingMatrix LSPosed fork) |
+| Discord | Tested with 349.9: back camera at minimum zoom (`0.508`, the ultrawide) with `PREVIEW_STABILIZATION` and `[30,30]`, front camera at minimum zoom (`0.896`), and stock values again with every setting at App default |
 | Frameworks with API 100 only (LSPosed 1.9.x, Vector 2.0) | Not supported: they can't load modern API 101 modules |
 | Apps | Camera2 apps. Apps that use the old Camera API or CameraX extensions are not covered |
 | Samsung, Xiaomi and other OEM Android builds | Untested |
