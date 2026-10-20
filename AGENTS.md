@@ -4,7 +4,7 @@ A modern-API Xposed module (libxposed API 101, compiled against 102) scoped to u
 
 ## Setup and verification
 
-Builds and tests run inside a Docker container that carries the Android SDK and JDK 21, as in [CameraRefreshFix](https://github.com/etcherfx/CameraRefreshFix). Don't install anything Android-related on the host, and don't assume the SDK exists outside the container.
+Builds and tests run inside a Docker container that carries the Android SDK and JDK 21. Don't install anything Android-related on the host, and don't assume the SDK exists outside the container.
 
 ```sh
 docker build -t lensunlock-build docker

@@ -15,7 +15,7 @@
 
 </div>
 
-## What it does
+## Features
 
 Many camera apps never ask for the ultrawide lens, video stabilization or a fixed frame rate, even though the device supports them. LensUnlock is a modern-API Xposed module (libxposed API 101, compiled against 102) that sets those capture-request values for Camera2 apps you pick. Each setting is opt-in per app and per camera facing, and when it's on it replaces whatever the app sent.
 
@@ -70,7 +70,7 @@ If a hook target is missing or has a different signature on your Android build, 
 | Item | Status |
 |---|---|
 | Android | 12 or newer; tested on Android 17 (Pixel 10 Pro) |
-| Xposed frameworks | Any that implements libxposed API 101 or newer. Tested with Vector 2.2 (the JingMatrix LSPosed fork) |
+| Xposed frameworks | Any that implements libxposed API 101 or newer. Tested with Vector 2.2 (the JingMatrix LSPosed fork); Vector 2.1 and newer qualify |
 | Discord | Tested with 349.9: back camera at minimum zoom (`0.508`, the ultrawide) with `PREVIEW_STABILIZATION` and `[30,30]`, front camera at minimum zoom (`0.896`), and stock values again with every setting at App default |
 | Frameworks with API 100 only (LSPosed 1.9.x, Vector 2.0) | Not supported: they can't load modern API 101 modules |
 | Apps | Camera2 apps. Apps that use the old Camera API or CameraX extensions are not covered |
