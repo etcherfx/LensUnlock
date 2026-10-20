@@ -38,8 +38,12 @@ class PrefsBridge(
             settings = read(remote)
             val changeListener = SharedPreferences.OnSharedPreferenceChangeListener { changed, _ ->
                 try {
-                    settings = read(changed)
-                    log.line(Log.INFO, "Settings changed: ${describe(settings)}")
+                    // Called once per changed key, so one save can arrive several times; log real changes only.
+                    val updated = read(changed)
+                    if (updated != settings) {
+                        settings = updated
+                        log.line(Log.INFO, "Settings changed: ${describe(updated)}")
+                    }
                 } catch (t: Throwable) {
                     log.once.log("prefs-reload", Log.WARN, t) { "Could not reload settings; keeping ${describe(settings)}" }
                 }
