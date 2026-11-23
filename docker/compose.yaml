@@ -1,0 +1,20 @@
+# Runs the full check from the repo root with no shell variables, so it works under cmd.exe and bash:
+#
+#   docker compose -f docker/compose.yaml run --rm --build check
+name: lensunlock-check
+
+services:
+  check:
+    build: .
+    image: lensunlock-build
+    volumes:
+      - ..:/work
+      - gradle:/root/.gradle
+      - android-debug-key:/root/.android
+    command: ./gradlew check assembleDebug assembleRelease
+
+volumes:
+  gradle:
+    name: lensunlock-gradle
+  android-debug-key:
+    name: android-debug-key

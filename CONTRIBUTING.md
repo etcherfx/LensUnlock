@@ -17,6 +17,8 @@ docker build -t lensunlock-build docker
 docker run --rm -v "$PWD:/work" -v lensunlock-gradle:/root/.gradle lensunlock-build ./gradlew check assembleDebug assembleRelease
 ```
 
+Or, from the repo root in any shell (including cmd.exe): `docker compose -f docker/compose.yaml run --rm --build check`.
+
 `check` runs the unit tests and lint; both must pass before a pull request. The debug APK lands in `app/build/outputs/apk/debug/`. A hook change also needs a test on a device or emulator with an Xposed framework that implements libxposed API 101 or newer. [AGENTS.md](AGENTS.md) has the code map and the rules hooks must follow.
 
 ## Pull requests
